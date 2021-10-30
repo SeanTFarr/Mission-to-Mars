@@ -9,7 +9,7 @@ import datetime as dt
 def scrape_all():
     # Initiate headless driver for deployment
     executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
+    browser = Browser('chrome', **executable_path, headless=True)
     # set news title and paragraph variables
     news_title, news_paragraph = mars_news(browser)
     # Run all scraping functions and store results in dictionary
@@ -20,9 +20,9 @@ def scrape_all():
       "facts": mars_facts(),
       "last_modified": dt.datetime.now()
     }
-# Stop webdriver and return data
-browser.quit()
-return data
+    # Stop webdriver and return data
+    browser.quit()
+    return data
 
 # ### News Title and Paragraph
 
@@ -91,7 +91,7 @@ def featured_image(browser):
 # ##Mars Facts
 
 # Declare and define function
-def mars_facts:
+def mars_facts():
     
     #add try/except for error handling
     try:
