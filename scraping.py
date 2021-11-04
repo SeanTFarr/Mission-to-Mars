@@ -12,14 +12,18 @@ def scrape_all():
     browser = Browser('chrome', **executable_path, headless=True)
     # set news title and paragraph variables
     news_title, news_paragraph = mars_news(browser)
+
+    img_url, title = hemi(browser)
     # Run all scraping functions and store results in dictionary
     data = {
       "news_title": news_title,
       "news_paragraph": news_paragraph,
       "featured_image": featured_image(browser),
       "facts": mars_facts(),
+      "hemispheres": [{"img_url": img_url, "title": title}],
       "last_modified": dt.datetime.now()
     }
+    
     # Stop webdriver and return data
     browser.quit()
     return data
@@ -107,6 +111,30 @@ def mars_facts():
 
     # convert our DataFrame back into HTML-ready code, add bootstrap 
     return df.to_html(classes="table table-striped")
+
+# ##Hemispheres
+
+# Declare and define function
+def hemi(browser):
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+    html = browser.html
+    hemisphere_image_urls = []
+    for image in range (0, 4):
+        browser.visit(url)
+        hemisphere = browser.find_by_tag('h3')[image]
+        hemisphere.click()
+        html = browser.html
+        hemi_soup = soup(html, 'html.parser')
+        sample = hemi_soup.find('div', class_='downloads')
+        hemisphere_image = sample.find('a').get('href')
+        img_url = 'https://marshemispheres.com/' + hemisphere_image
+        title = hemi_soup.find('h2', class_='title').get_text()
+        hemispheres = {'image_url': img_url, 'title': title}
+    if hemispheres not in hemisphere_image_urls:
+        hemisphere_image_urls.append(hemispheres)
+
+    return img_url, title
 
 
 if __name__ == "__main__":
